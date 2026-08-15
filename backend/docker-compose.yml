@@ -1,0 +1,26 @@
+services:
+  # 1. Your Node.js Application
+  querywhisper:
+    container_name: QueryWhisper
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    # The 'env_file' tells Docker to load your .env variables into the container
+    env_file:
+      - .env
+    command: npm start
+
+  # 2. Your Redis Database
+  redis:
+    image: redis:latest
+    container_name: QueryWhisperRedisStore
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+volumes:
+  redis_data:
