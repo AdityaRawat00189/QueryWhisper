@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import session from 'express-session';
 import { RedisStore } from "connect-redis";
 import { createClient } from "redis";
@@ -12,9 +13,25 @@ import requireAuth from "./middlewares/auth.middleware.js";
 import authRoute from './routes/auth.route.js';
 import saveDBRoute from './routes/saveCredentials.route.js'
 import executeRoute from './routes/executeQuery.route.js'
+import databaseRoute from './routes/database.route.js'
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
@@ -35,10 +52,11 @@ app.use(session({
     }),
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: false, 
-    cookie: { 
+    saveUninitialized: false,
+    cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     }
 }));
@@ -51,6 +69,7 @@ app.get("/v0/health", requireAuth, (req, res) => {
 app.use('/v0/api/auth', authRoute);
 app.use('/v0/api/saveCredentials',requireAuth, saveDBRoute);
 app.use("/v0/api/execute-query", requireAuth,executeRoute);
+app.use("/v0/api/database", requireAuth, databaseRoute);
 
 // --- Initialization ---
 app.listen(PORT, async () => {

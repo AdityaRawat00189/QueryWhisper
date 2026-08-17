@@ -97,3 +97,16 @@ export const logout = (req, res) => {
         res.status(200).json({ message: "Logged out" });
     });
 }
+
+export const getMe = (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+    return res.status(200).json({
+        user: {
+            id: req.user._id,
+            username: req.user.username,
+            email: req.user.email,
+        }
+    });
+};
