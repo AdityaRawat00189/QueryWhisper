@@ -10,6 +10,8 @@ import requireAuth from "./middlewares/auth.middleware.js";
 
 // Routes
 import authRoute from './routes/auth.route.js';
+import saveDBRoute from './routes/saveCredentials.route.js'
+import executeRoute from './routes/executeQuery.route.js'
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -47,6 +49,8 @@ app.get("/v0/health", requireAuth, (req, res) => {
 });
 
 app.use('/v0/api/auth', authRoute);
+app.use('/v0/api/saveCredentials',requireAuth, saveDBRoute);
+app.use("/v0/api/execute-query", requireAuth,executeRoute);
 
 // --- Initialization ---
 app.listen(PORT, async () => {
