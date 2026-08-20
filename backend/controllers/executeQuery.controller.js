@@ -1,7 +1,11 @@
 import crypto from 'crypto';
+import axios from 'axios'
 
 import createConnection from "../config/sqlConnection.js";
 import DbCredential from "../schemas/dbCredential.schema.js";
+import schemaExtractor from '../services/database/schemaExtractor.js';
+import SchemaChunker from '../services/database/schemaChunker.js';
+import DatabaseSchema from '../schemas/database.schema.js';
 
 function decryptPassword(encryptedHex, ivHex, authTagHex, secretKeyHex) {
   const secretKey = Buffer.from(secretKeyHex, 'hex');
@@ -60,6 +64,42 @@ export const executeQuery = async (req, res) => {
     if (!connection) {
       return res.status(500).json({ error: "Failed to establish database connection." });
     }
+
+    const extractedSchema = await schemaExtractor.extract(connection, "mysql");
+    console.log(JSON.stringify(extractedSchema, null, 2));
+
+    const savedSchema = await DatabaseSchema.findOneAndUpdate(
+      { connectionId: dbCredential._id },
+      {
+        connection: dbCredential._id,
+        userId: req.user._id,
+        databaseType: "mysql",
+        databaseName: dbName,
+        tables: extractedSchema.tables,
+        extractedAt: new Date(),
+        updatedAt: new Date()
+      },{
+        upsert: true,
+        new: true,
+        runValidators: true
+      }
+    );
+    console.log("Schema Saved to MongoDB: ", savedSchema._id);
+
+    const structured = await SchemaChunker.createChunks(savedSchema ,savedSchema._id ,req.user._id);
+    console.log(JSON.stringify(structured, null, 2));
+
+    const aiResponse = await axios.post(
+      "http://localhost:8000/api/v1/schema/index",{
+        connectionId: dbCredential._id.toString(),
+        userId: req.user._id.toString(),
+        databaseType: savedSchema.databaseType,
+        databaseName: dbName,
+        chunks: structured
+      }
+    )
+
+    console.log("AI Service:", aiResponse.data);
 
     const [rows, fields] = await connection.execute(query);
     
