@@ -101,6 +101,20 @@ export const executeQuery = async (req, res) => {
 
     console.log("AI Service:", aiResponse.data);
 
+    const retrievalResponse = await axios.post(
+      "http://localhost:8000/search",
+      {
+        connectionId: dbCredential._id.toString(),
+        query,
+        limit: 5
+      }
+    );
+
+    console.log(
+      "Retrieved schema chunks:",
+      retrievalResponse.data.results?.length || 0
+    );
+
     const [rows, fields] = await connection.execute(query);
     
     // Always close the connection when done
@@ -109,7 +123,8 @@ export const executeQuery = async (req, res) => {
     // 6. Return results
     return res.status(200).json({
       success: true,
-      data: rows
+      data: rows,
+      schemaContext: retrievalResponse.data.results || []
     });
 
   } catch (error) {

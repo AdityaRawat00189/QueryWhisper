@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# IDE settings
+.vscode/
+.idea/
+
+# FastAPI / Uvicorn specific
+# (if you store auto-generated files or reload artifacts)
+*.pid
+
+# Pytest
+.pytest_cache/
+
+# MyPy
+.mypy_cache/
+
+# Pydantic compiled models
+*.pydantic/
+
+# Database files (if using SQLite locally)
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.*

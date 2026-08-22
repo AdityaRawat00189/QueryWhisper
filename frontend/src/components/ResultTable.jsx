@@ -3,6 +3,7 @@ import { Copy, Check, AlertCircle, Database, Clock, FileSpreadsheet, Loader2 } f
 
 export const ResultTable = ({
   results,
+  schemaContext = [],
   isLoading = false,
   error = null,
   executionTime = null,
@@ -124,6 +125,42 @@ export const ResultTable = ({
           </button>
         )}
       </div>
+
+      {schemaContext.length > 0 && (
+        <div className="max-h-40 overflow-y-auto border-b border-border bg-surface-muted/40 px-3 py-2">
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-text-primary">
+              Retrieved schema context
+            </span>
+            <span className="text-[10px] font-mono text-text-muted">
+              {schemaContext.length} chunks
+            </span>
+          </div>
+          <div className="space-y-1.5">
+            {schemaContext.map((item, index) => {
+              const payload = item.payload || {};
+
+              return (
+                <div
+                  key={`${payload.tableName || 'schema'}-${index}`}
+                  className="rounded border border-border bg-white px-2 py-1.5 text-[10px]"
+                >
+                  <div className="flex items-center gap-2 font-mono text-text-secondary">
+                    <span className="font-semibold text-text-primary">
+                      {payload.tableName || 'Schema'}
+                    </span>
+                    <span>{payload.type || 'chunk'}</span>
+                    <span className="ml-auto">score {Number(item.score).toFixed(3)}</span>
+                  </div>
+                  <p className="mt-1 whitespace-pre-wrap font-mono text-text-secondary">
+                    {payload.content || 'No content returned'}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Table Content Area */}
       <div className="flex-1 overflow-auto bg-white relative">

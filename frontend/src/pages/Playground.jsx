@@ -16,6 +16,7 @@ export const Playground = () => {
   // Execution state
   const [isExecuting, setIsExecuting] = useState(false);
   const [queryResults, setQueryResults] = useState(null);
+  const [schemaContext, setSchemaContext] = useState([]);
   const [queryError, setQueryError] = useState(null);
   const [executionDuration, setExecutionDuration] = useState(null);
 
@@ -37,6 +38,7 @@ export const Playground = () => {
     setIsExecuting(true);
     setQueryError(null);
     setQueryResults(null);
+    setSchemaContext([]);
     setExecutionDuration(null);
 
     const startTime = performance.now();
@@ -54,6 +56,7 @@ export const Playground = () => {
       // Backend returns { success: true, data: rows }
       const rows = response?.data !== undefined ? response.data : response;
       setQueryResults(rows);
+      setSchemaContext(response?.schemaContext || []);
 
       // Add to recent queries (prevent duplicate consecutive entries)
       setRecentQueries((prev) => {
@@ -115,6 +118,7 @@ export const Playground = () => {
           <section className="w-full lg:w-[52%] min-h-[380px] lg:h-full flex-1 flex flex-col">
             <ResultTable
               results={queryResults}
+              schemaContext={schemaContext}
               isLoading={isExecuting}
               error={queryError}
               executionTime={executionDuration}
