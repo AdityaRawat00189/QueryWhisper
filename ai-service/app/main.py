@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from app.services.embedding_service import embedding_service
 from app.services.qdrant_service import qdrant_service
+from app.services.schema_context_builder import SchemaContextBuilder
 
 app = FastAPI(
     title="QueryWhisper AI Service",
@@ -71,10 +72,14 @@ async def search_schema(request: SchemaSearchRequest):
 
     print("==================================\n")
 
+    context = SchemaContextBuilder.build_text(results)
+    print(context)
+
     return {
         "success": True,
         "query": request.query,
-        "results": retrieved_chunks
+        "results": retrieved_chunks,
+        "schemaContext": context
     }
 
 
