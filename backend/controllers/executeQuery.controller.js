@@ -66,7 +66,7 @@ export const executeQuery = async (req, res) => {
     }
 
     const extractedSchema = await schemaExtractor.extract(connection, "mysql");
-    console.log(JSON.stringify(extractedSchema, null, 2));
+    // console.log(JSON.stringify(extractedSchema, null, 2));
 
     const savedSchema = await DatabaseSchema.findOneAndUpdate(
       { connectionId: dbCredential._id },
@@ -84,9 +84,9 @@ export const executeQuery = async (req, res) => {
         runValidators: true
       }
     );
-    console.log("Schema Saved to MongoDB: ", savedSchema._id);
+    // console.log("Schema Saved to MongoDB: ", savedSchema._id);
 
-    const structured = await SchemaChunker.createChunks(savedSchema ,savedSchema._id ,req.user._id);
+    const structured = await SchemaChunker.createChunks(savedSchema ,dbCredential._id ,req.user._id);
     console.log(JSON.stringify(structured, null, 2));
 
     const aiResponse = await axios.post(
@@ -99,7 +99,7 @@ export const executeQuery = async (req, res) => {
       }
     )
 
-    console.log("AI Service:", aiResponse.data);
+    // console.log("AI Service:", aiResponse.data);
 
     const retrievalResponse = await axios.post(
       "http://localhost:8000/search",
@@ -110,13 +110,47 @@ export const executeQuery = async (req, res) => {
       }
     );
 
-    console.log(
-      "Retrieved schema chunks:",
-      retrievalResponse.data.results?.length || 0
+    // {
+    //   "connectionId": "6a872838e10d3420618f862b",
+    //   "userId": "6a80bf9866d4a7da1a2908e0",
+    //   "databaseType": "mysql",
+    //   "databaseName": "College",
+    //   "query": "Show me teachers and their department names"
+    // }
+    console.log("connectionId", dbCredential._id);
+    console.log("userId", req.user._id);
+    console.log("databaseType", savedSchema.databaseType);
+    console.log("databaseName", dbName);
+    console.log("query", query);
+    // const sqlQuery = await axios.post(
+    //   "http://localhost:8000/api/v1/sql/generate",
+    //   {
+    //     "connectionId": "6a872838e10d3420618f862b",
+    //     "userId": "6a80bf9866d4a7da1a2908e0",
+    //     "databaseType": "mysql",
+    //     "databaseName": "College",
+    //     "query": "Show me teachers and their department names"
+    //   }
+    // );
+    const sqlQuery = await axios.post(
+      "http://localhost:8000/api/v1/sql/generate",
+      {
+        "connectionId": dbCredential._id.toString(),
+        "userId": req.user._id.toString(),
+        "databaseType": savedSchema.databaseType,
+        "databaseName": dbName,
+        "query": query
+      }
     );
 
-    const [rows, fields] = await connection.execute(query);
-    
+    console.log("Runnable SQL Query:", sqlQuery.data.sql);
+    // console.log(
+    //   "Retrieved schema chunks:",
+    //   retrievalResponse.data.results?.length || 0
+    // );
+
+    const [rows, fields] = await connection.execute(sqlQuery.data.sql);
+    console.log(rows, fields)
     // Always close the connection when done
     await connection.end();
 
@@ -124,7 +158,8 @@ export const executeQuery = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: rows,
-      schemaContext: retrievalResponse.data.results || []
+      schemaContext: retrievalResponse.data.results || [],
+      sqlQuery: sqlQuery.data.sql
     });
 
   } catch (error) {

@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
 from app.routes.schema import router as schema_router
+from app.routes.sql import router as sql_router
 from pydantic import BaseModel
 
 from app.services.embedding_service import embedding_service
@@ -20,6 +24,11 @@ class SchemaSearchRequest(BaseModel):
 app.include_router(
     schema_router,
     prefix="/api/v1/schema"
+)
+
+app.include_router(
+    sql_router,
+    prefix="/api/v1"
 )
 
 @app.post("/search")

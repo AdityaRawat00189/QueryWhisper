@@ -1,27 +1,17 @@
-from qdrant_client import Filter, FieldCondition, MatchValue
+from app.services.embedding_service import embedding_service
+from app.services.qdrant_service import qdrant_service
+
 
 class RetrievalService:
 
-    def __init__(self, qdrant_client, collection_name):
-        self.client = qdrant_client
-        self.collection_name = collection_name
+    def search(self, connection_id, query, limit=5):
+        query_embedding = embedding_service.generate_embedding(query)
 
-    def search(self, query_embedding, connection_id, limit=5):
-        query_filter = Filter(
-            must=[
-                FieldCondition(
-                    key="connectionId",
-                    match=MatchValue(value = connection_id)
-                )
-            ]
+        return qdrant_service.search(
+            query_embedding=query_embedding,
+            connection_id=connection_id,
+            limit=limit
         )
 
-        results = self.client.query_points(
-            collection_name = self.collection_name,
-            query=query_embedding,
-            query_filter=query_filter,
-            limit=limit,
-            with_payload=True
-        )
 
-        return results.points
+retrieval_service = RetrievalService()

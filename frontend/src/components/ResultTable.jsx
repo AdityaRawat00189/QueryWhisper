@@ -21,7 +21,7 @@ export const ResultTable = ({
           No query results yet
         </h3>
         <p className="text-xs text-text-secondary max-w-sm">
-          Write a SQL query in the editor and click <strong className="text-text-primary">Run Query</strong> (or press Ctrl+Enter) to view results.
+          Ask a question in natural language above and click <strong className="text-text-primary">Ask</strong> (or press Ctrl+Enter) to generate SQL and view results.
         </p>
       </div>
     );
@@ -33,10 +33,10 @@ export const ResultTable = ({
       <div className="h-full bg-white border border-border rounded-lg flex flex-col items-center justify-center p-8 text-center shadow-card">
         <Loader2 className="w-6 h-6 animate-spin text-text-secondary mb-3" />
         <h3 className="text-sm font-medium text-text-primary mb-1">
-          Executing query...
+          Generating SQL & executing...
         </h3>
         <p className="text-xs text-text-muted font-mono">
-          Connecting to database and awaiting response
+          Analyzing your question, generating SQL, and querying the database
         </p>
       </div>
     );
@@ -56,9 +56,10 @@ export const ResultTable = ({
         <div className="mt-4 text-xs text-text-secondary space-y-1">
           <p className="font-medium text-text-primary">Troubleshooting tips:</p>
           <ul className="list-disc list-inside text-text-secondary space-y-0.5 text-[11px]">
-            <li>Check for SQL syntax errors or typos in table/column names.</li>
-            <li>Ensure the selected active database contains the referenced tables.</li>
-            <li>Verify database user permissions for this operation.</li>
+            <li>Try rephrasing your question with more specific table or column names.</li>
+            <li>Ensure the selected active database contains the tables you're asking about.</li>
+            <li>Verify database user permissions for read operations.</li>
+            <li>Check that the AI service and database are both running.</li>
           </ul>
         </div>
       </div>

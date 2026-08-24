@@ -137,7 +137,7 @@ export const Sidebar = ({
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
             <Clock className="w-3.5 h-3.5" />
-            <span>Recent Queries</span>
+          <span>Recent Questions</span>
           </div>
           <span className="text-[10px] text-text-muted font-mono">
             {recentQueries.length}
@@ -146,7 +146,7 @@ export const Sidebar = ({
 
         {recentQueries.length === 0 ? (
           <div className="py-6 text-center text-text-muted text-xs">
-            No queries executed yet in this session.
+            No questions asked yet in this session.
           </div>
         ) : (
           <div className="space-y-1.5 overflow-y-auto max-h-[340px] pr-1">
@@ -163,7 +163,7 @@ export const Sidebar = ({
                   </span>
                   <ChevronRight className="w-3 h-3 text-text-muted group-hover:text-text-primary transition-transform group-hover:translate-x-0.5" />
                 </div>
-                <div className="text-xs font-mono text-text-primary line-clamp-2 break-all leading-snug">
+                <div className="text-xs text-text-primary line-clamp-2 break-words leading-snug">
                   {item.query}
                 </div>
               </button>
