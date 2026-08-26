@@ -59,3 +59,59 @@
 .cm-editor.cm-focused {
   outline: none !important;
 }
+
+/* ===== Voice Input Animations ===== */
+
+/* Outer pulsing ring on the mic button */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Sound wave bars inside the mic button */
+@keyframes sound-wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.voice-wave-bar {
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  border-radius: 9999px;
+  background-color: #ef4444;
+  transform-origin: center;
+  animation: sound-wave 0.8s ease-in-out infinite;
+}
+
+.voice-wave-bar:nth-child(1) { animation-delay: 0s; }
+.voice-wave-bar:nth-child(2) { animation-delay: 0.15s; }
+.voice-wave-bar:nth-child(3) { animation-delay: 0.3s; }
+.voice-wave-bar:nth-child(4) { animation-delay: 0.45s; }
+
+/* Glowing border on the input card when listening */
+@keyframes glow-border {
+  0%, 100% { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 0 8px rgba(239, 68, 68, 0.08); }
+  50% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 16px rgba(239, 68, 68, 0.15); }
+}
+
+.voice-listening-card {
+  animation: glow-border 2s ease-in-out infinite;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Listening badge dot blink */
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.voice-dot-blink {
+  animation: blink-dot 1s ease-in-out infinite;
+}
+
