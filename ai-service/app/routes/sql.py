@@ -5,6 +5,8 @@ from app.models.sql_models import ( SQLGenerationRequest, SQLGenerationResponse)
 from app.services.sql_generator import SQLGenerator
 from app.services.schema_context_builder import SchemaContextBuilder
 
+from app.graph.graph import graph
+
 from app.services.retrieval_schema import retrieval_service
 
 router = APIRouter(
@@ -24,55 +26,25 @@ async def generate_sql(request: SQLGenerationRequest):
         print("Database:", request.databaseName)
         print("Query:", request.query)
 
-        # -----------------------------------------
-        # 1. Search relevant schema from Qdrant
-        # -----------------------------------------
+        result = await graph.ainvoke({
+            "question": request.query,
 
-        results = retrieval_service.search(
-            connection_id=request.connectionId,
-            query=request.query,
-            limit=5
-        )
+            "connection_id": request.connectionId,
 
-        print(
-            "Retrieved schema chunks:",
-            len(results)
-        )
+            "retrieved_schema": None,
+            "schema_context": None,
+            "sql": None,
+            
+            "sql_correct": False,
+            "verification_error": None,
+            "verification_feedback": None,
 
-        # -----------------------------------------
-        # 2. Build schema context
-        # -----------------------------------------
+            "retry_count": 0,
+            "max_retries": 3
+        })
 
-        schema_context = SchemaContextBuilder.build_text(
-            results
-        )
+        sql = result["sql"]
 
-        if not schema_context:
-
-            raise HTTPException(
-                status_code=404,
-                detail="No relevant database schema found."
-            )
-
-        print(
-            "\n========== SCHEMA CONTEXT =========="
-        )
-
-        print(schema_context)
-
-        print(
-            "===================================="
-        )
-
-        # -----------------------------------------
-        # 3. Generate SQL using LLM
-        # -----------------------------------------
-
-        sql = await sql_generator.generate_sql(
-            user_query=request.query,
-            schema_context=schema_context,
-            database_type=request.databaseType
-        )
 
         print(
             "\n========== GENERATED SQL =========="
@@ -106,7 +78,7 @@ async def generate_sql(request: SQLGenerationRequest):
             "success": True,
             "query": request.query,
             "sql": sql,
-            "schemaContext": schema_context
+            "schemaContext": result["schema_context"]
         }
 
     except HTTPException:

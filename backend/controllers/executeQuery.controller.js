@@ -173,6 +173,22 @@ export const executeQuery = async (req, res) => {
       });
     }
 
+    // Forward errors from upstream services (AI service / FastAPI)
+    if (error.response) {
+      const status = error.response.status || 500;
+      const data = error.response.data;
+      // FastAPI returns { detail: "..." } for HTTPException
+      const detail = data?.detail || data?.message || data?.error || "Upstream service error.";
+      return res.status(status).json({ error: detail });
+    }
+
+    // Network errors (AI service unreachable)
+    if (error.request) {
+      return res.status(503).json({ 
+        error: "Unable to reach AI service. Please ensure it is running." 
+      });
+    }
+
     return res.status(500).json({ error: "Internal server error." });
   }
 };
