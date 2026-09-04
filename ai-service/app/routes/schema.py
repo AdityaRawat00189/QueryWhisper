@@ -44,11 +44,11 @@ async def index_schema(
     request: SchemaIndexRequest
 ):
 
-    print("\n========== SCHEMA INDEXING ==========")
+    # print("\n========== SCHEMA INDEXING ==========")
 
-    print("Database:", request.databaseName)
-    print("Connection:", request.connectionId)
-    print("Number of chunks:", len(request.chunks))
+    # print("Database:", request.databaseName)
+    # print("Connection:", request.connectionId)
+    # print("Number of chunks:", len(request.chunks))
 
     if not request.chunks:
         qdrant_service.delete_connection(request.connectionId)
@@ -76,15 +76,15 @@ async def index_schema(
         )
     )
 
-    print(
-        "Generated embeddings:",
-        len(embeddings)
-    )
+    # print(
+    #     "Generated embeddings:",
+    #     len(embeddings)
+    # )
 
-    print(
-        "Embedding dimensions:",
-        len(embeddings[0])
-    )
+    # print(
+    #     "Embedding dimensions:",
+    #     len(embeddings[0])
+    # )
 
     # 3. Store in Qdrant
 
@@ -93,12 +93,12 @@ async def index_schema(
         embeddings
     )
 
-    print(
-        "Inserted into Qdrant:",
-        inserted
-    )
+    # print(
+    #     "Inserted into Qdrant:",
+    #     inserted
+    # )
 
-    print("====================================\n")
+    # print("====================================\n")
 
     return {
         "success": True,

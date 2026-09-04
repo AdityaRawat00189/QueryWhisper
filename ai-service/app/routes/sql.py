@@ -19,12 +19,12 @@ sql_generator = SQLGenerator()
 @router.post("/generate", response_model=SQLGenerationResponse)
 async def generate_sql(request: SQLGenerationRequest):
     try:
-        print("\n========== SQL GENERATION ==========")
+        # print("\n========== SQL GENERATION ==========")
 
-        print("Connection:", request.connectionId)
-        print("User:", request.userId)
-        print("Database:", request.databaseName)
-        print("Query:", request.query)
+        # print("Connection:", request.connectionId)
+        # print("User:", request.userId)
+        # print("Database:", request.databaseName)
+        # print("Query:", request.query)
 
         result = await graph.ainvoke({
             "question": request.query,
@@ -46,15 +46,15 @@ async def generate_sql(request: SQLGenerationRequest):
         sql = result["sql"]
 
 
-        print(
-            "\n========== GENERATED SQL =========="
-        )
+        # print(
+        #     "\n========== GENERATED SQL =========="
+        # )
 
-        print(sql)
+        # print(sql)
 
-        print(
-            "===================================\n"
-        )
+        # print(
+        #     "===================================\n"
+        # )
 
         # -----------------------------------------
         # 4. Handle insufficient schema
@@ -86,10 +86,10 @@ async def generate_sql(request: SQLGenerationRequest):
 
     except Exception as error:
 
-        print(
-            "SQL Generation Error:",
-            repr(error)
-        )
+        # print(
+        #     "SQL Generation Error:",
+        #     repr(error)
+        # )
 
         raise HTTPException(
             status_code=500,

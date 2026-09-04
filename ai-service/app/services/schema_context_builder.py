@@ -47,7 +47,7 @@ class SchemaContextBuilder:
 
     @staticmethod
     def build_text(results):
-        print(f"results: {results}")
+        # print(f"results: {results}")
 
         tables = {}
         relationships = []
@@ -97,8 +97,8 @@ class SchemaContextBuilder:
 
         final_context = "\n\n".join(context)
 
-        print("\n========== SCHEMA CONTEXT ==========")
-        print(final_context)
-        print("====================================\n")
+        # print("\n========== SCHEMA CONTEXT ==========")
+        # print(final_context)
+        # print("====================================\n")
 
         return final_context

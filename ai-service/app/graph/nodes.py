@@ -4,15 +4,29 @@ from .state import SQLState
 from ..services.retrieval_schema import retrieval_service
 from ..services.schema_context_builder import SchemaContextBuilder
 from ..services.sql_generator import SQLGenerator
+from ..services.normalization import Normalization
+
+async def normalize_question_node(state: SQLState):
+    question = state['question']
+
+    normalize_question = await Normalization().normalize_text(question)
+    print("Hello, from Normalize Question Node")
+    print(normalize_question)
+
+    return {
+        "normalized_question": normalize_question
+    }
 
 def retrieve_schema_node(state: SQLState):
-    question = state['question']
+    question = state['normalized_question']
     connection_id = state['connection_id']
+    print("Hello, from Retrieve Schema Node")
+    print(question)
 
     retrieved_schema = retrieval_service.search(connection_id, question, limit=5)
 
-    print("Hello from retrieve_schema_node")
-    print(f"Retrived Schema: {retrieved_schema}")
+    # print("Hello from retrieve_schema_node")
+    # print(f"Retrived Schema: {retrieved_schema}")
 
     return {
         "retrieved_schema": retrieved_schema
@@ -24,15 +38,15 @@ def build_schema_context_node(state: SQLState):
     print("Hello from build_schema_context_node")
     schema_context = SchemaContextBuilder.build_text(results)
 
-    print("Build Schema Context Node:")
-    print(f"Schema Context: {schema_context}")
+    # print("Build Schema Context Node:")
+    # print(f"Schema Context: {schema_context}")
     return {
         "schema_context": schema_context
     }
 
 async def generate_sql_node(state: SQLState):
     schema_context = state['schema_context']
-    question = state['question']
+    question = state['normalized_question']
 
     print("Hello from generate_sql_node")
 
@@ -41,8 +55,8 @@ async def generate_sql_node(state: SQLState):
         schema_context=schema_context,
         database_type='MYSQL'
     )
-    print("Generate SQL Node:")
-    print(f"Generated SQL: {sql}")
+    # print("Generate SQL Node:")
+    # print(f"Generated SQL: {sql}")
     return {
         "sql": sql
     }

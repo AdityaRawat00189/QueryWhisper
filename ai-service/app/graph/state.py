@@ -4,6 +4,7 @@ class SQLState(TypedDict):
 
     # Input
     question: str
+    normalized_question: str
     connection_id: str
 
     # Schema

@@ -8,7 +8,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+  timeout: 300000,
 });
 
 /**
@@ -17,6 +17,10 @@ export const apiClient = axios.create({
  */
 export const extractErrorMessage = (error, defaultMessage = 'An unexpected error occurred. Please try again.') => {
   if (!error) return defaultMessage;
+
+  if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+    return 'The backend took too long to respond. Please try again.';
+  }
   
   if (error.response) {
     const data = error.response.data;

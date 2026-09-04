@@ -72,7 +72,10 @@ app.use("/v0/api/execute-query", requireAuth,executeRoute);
 app.use("/v0/api/database", requireAuth, databaseRoute);
 
 // --- Initialization ---
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
     await connectDB();
     console.log(`✅ Server is running on port ${PORT}`);
 });
+
+server.requestTimeout = 300000;
+server.setTimeout(300000);

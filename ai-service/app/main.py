@@ -34,21 +34,21 @@ app.include_router(
 @app.post("/search")
 async def search_schema(request: SchemaSearchRequest):
 
-    print("\n========== SCHEMA SEARCH ==========")
+    # print("\n========== SCHEMA SEARCH ==========")
 
-    print("Connection:", request.connectionId)
-    print("Query:", request.query)
-    print("Limit:", request.limit)
+    # print("Connection:", request.connectionId)
+    # print("Query:", request.query)
+    # print("Limit:", request.limit)
 
     # 1. Generate embedding for user query
     query_embedding = embedding_service.generate_embedding(
         request.query
     )
 
-    print(
-        "Query embedding dimensions:",
-        len(query_embedding)
-    )
+    # print(
+    #     "Query embedding dimensions:",
+    #     len(query_embedding)
+    # )
 
     # 2. Search Qdrant
     results = qdrant_service.search(
@@ -66,23 +66,23 @@ async def search_schema(request: SchemaSearchRequest):
             "payload": result.payload
         })
 
-    print(
-        "Retrieved chunks:",
-        len(retrieved_chunks)
-    )
+    # print(
+    #     "Retrieved chunks:",
+    #     len(retrieved_chunks)
+    # )
 
-    for result in retrieved_chunks:
+    # for result in retrieved_chunks:
 
-        print(
-            result["score"],
-            result["payload"].get("type"),
-            result["payload"].get("tableName")
-        )
+        # print(
+        #     result["score"],
+        #     result["payload"].get("type"),
+        #     result["payload"].get("tableName")
+        # )
 
-    print("==================================\n")
+    # print("==================================\n")
 
     context = SchemaContextBuilder.build_text(results)
-    print(context)
+    # print(context)
 
     return {
         "success": True,

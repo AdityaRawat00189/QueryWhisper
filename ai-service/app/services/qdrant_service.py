@@ -36,8 +36,8 @@ class QdrantService:
                 )
             )
 
-            print(f"Created Collection: "
-                  f"{self.collection_name}")
+            # print(f"Created Collection: "
+            #       f"{self.collection_name}")
 
     def insert_chunks(self, chunks, embeddings):
         if not chunks:
